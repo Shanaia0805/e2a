@@ -25,9 +25,17 @@ export class ReviewView {
     '_from': string;
     'id': string;
     /**
+    * Coded reason this message was held for review. Populated for every hold (both directions, gate and scan). Open set; tolerate unknown values. Known values: sender_gate, recipient_gate, inbound_scan, outbound_scan, outbound_send.
+    */
+    'reviewReason'?: string;
+    /**
     * Hold state of this queue item. Open set; tolerate unknown values. Currently always pending_review (the queue lists held items).
     */
     'reviewStatus': string;
+    /**
+    * Aggregate content-scan score (0..1) that drove a scan hold. Omitted for gate-only holds.
+    */
+    'scanScore'?: number;
     'subject': string;
     'to': Array<string>;
 
@@ -85,10 +93,22 @@ export class ReviewView {
             "format": ""
         },
         {
+            "name": "reviewReason",
+            "baseName": "review_reason",
+            "type": "string",
+            "format": ""
+        },
+        {
             "name": "reviewStatus",
             "baseName": "review_status",
             "type": "string",
             "format": ""
+        },
+        {
+            "name": "scanScore",
+            "baseName": "scan_score",
+            "type": "number",
+            "format": "double"
         },
         {
             "name": "subject",

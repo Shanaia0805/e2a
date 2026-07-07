@@ -18,8 +18,8 @@ import re  # noqa: F401
 import json
 
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StrictStr, field_validator
-from typing import Any, ClassVar, Dict, List, Optional
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictFloat, StrictInt, StrictStr, field_validator
+from typing import Any, ClassVar, Dict, List, Optional, Union
 from e2a.v1.generated.models.attachment_meta_view import AttachmentMetaView
 from e2a.v1.generated.models.auth_verdict import AuthVerdict
 from e2a.v1.generated.models.message_body_view import MessageBodyView
@@ -51,14 +51,16 @@ class MessageView(BaseModel):
     read_status: StrictStr
     recipient: StrictStr
     reply_to: List[StrictStr]
+    review_reason: Optional[StrictStr] = Field(default=None, description="Coded reason this message was held for review (review surface only). Open set; tolerate unknown values. Known values: sender_gate, recipient_gate, inbound_scan, outbound_scan, outbound_send.")
     review_status: Optional[StrictStr] = Field(default=None, description="Review-hold lifecycle (outbound only). Open set; tolerate unknown values. Known values: pending_review, sent, review_rejected, review_expired_approved, review_expired_rejected.")
+    scan_score: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description="Aggregate content-scan score (0..1) that drove a scan hold (review surface only). Omitted for gate-only holds.")
     sent_as: Optional[StrictStr] = Field(default=None, description="From identity used at relay accept time (outbound only). Open set; tolerate unknown values. Known values: own_address, relay.")
     size_bytes: Optional[StrictInt] = None
     subject: StrictStr
     to: List[StrictStr]
     webhook_error: Optional[StrictStr] = None
     webhook_status: Optional[StrictStr] = None
-    __properties: ClassVar[List[str]] = ["attachments", "auth", "auth_headers", "body", "cc", "conversation_id", "created_at", "delivery_detail", "delivery_status", "direction", "flag_reason", "flagged", "from", "labels", "message_id", "parsed", "raw_message", "read_status", "recipient", "reply_to", "review_status", "sent_as", "size_bytes", "subject", "to", "webhook_error", "webhook_status"]
+    __properties: ClassVar[List[str]] = ["attachments", "auth", "auth_headers", "body", "cc", "conversation_id", "created_at", "delivery_detail", "delivery_status", "direction", "flag_reason", "flagged", "from", "labels", "message_id", "parsed", "raw_message", "read_status", "recipient", "reply_to", "review_reason", "review_status", "scan_score", "sent_as", "size_bytes", "subject", "to", "webhook_error", "webhook_status"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -147,7 +149,9 @@ class MessageView(BaseModel):
             "read_status": obj.get("read_status"),
             "recipient": obj.get("recipient"),
             "reply_to": obj.get("reply_to"),
+            "review_reason": obj.get("review_reason"),
             "review_status": obj.get("review_status"),
+            "scan_score": obj.get("scan_score"),
             "sent_as": obj.get("sent_as"),
             "size_bytes": obj.get("size_bytes"),
             "subject": obj.get("subject"),

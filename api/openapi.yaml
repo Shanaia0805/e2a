@@ -1208,9 +1208,16 @@ components:
           items:
             type: string
           type: array
+        review_reason:
+          description: "Coded reason this message was held for review (review surface only). Open set; tolerate unknown values. Known values: sender_gate, recipient_gate, inbound_scan, outbound_scan, outbound_send."
+          type: string
         review_status:
           description: "Review-hold lifecycle (outbound only). Open set; tolerate unknown values. Known values: pending_review, sent, review_rejected, review_expired_approved, review_expired_rejected."
           type: string
+        scan_score:
+          description: Aggregate content-scan score (0..1) that drove a scan hold (review surface only). Omitted for gate-only holds.
+          format: double
+          type: number
         sent_as:
           description: "From identity used at relay accept time (outbound only). Open set; tolerate unknown values. Known values: own_address, relay."
           type: string
@@ -1714,9 +1721,16 @@ components:
           type: string
         id:
           type: string
+        review_reason:
+          description: "Coded reason this message was held for review. Populated for every hold (both directions, gate and scan). Open set; tolerate unknown values. Known values: sender_gate, recipient_gate, inbound_scan, outbound_scan, outbound_send."
+          type: string
         review_status:
           description: Hold state of this queue item. Open set; tolerate unknown values. Currently always pending_review (the queue lists held items).
           type: string
+        scan_score:
+          description: Aggregate content-scan score (0..1) that drove a scan hold. Omitted for gate-only holds.
+          format: double
+          type: number
         subject:
           type: string
         to:

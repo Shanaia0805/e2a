@@ -41,9 +41,17 @@ export class MessageView {
     'recipient': string;
     'replyTo': Array<string>;
     /**
+    * Coded reason this message was held for review (review surface only). Open set; tolerate unknown values. Known values: sender_gate, recipient_gate, inbound_scan, outbound_scan, outbound_send.
+    */
+    'reviewReason'?: string;
+    /**
     * Review-hold lifecycle (outbound only). Open set; tolerate unknown values. Known values: pending_review, sent, review_rejected, review_expired_approved, review_expired_rejected.
     */
     'reviewStatus'?: string;
+    /**
+    * Aggregate content-scan score (0..1) that drove a scan hold (review surface only). Omitted for gate-only holds.
+    */
+    'scanScore'?: number;
     /**
     * From identity used at relay accept time (outbound only). Open set; tolerate unknown values. Known values: own_address, relay.
     */
@@ -180,10 +188,22 @@ export class MessageView {
             "format": ""
         },
         {
+            "name": "reviewReason",
+            "baseName": "review_reason",
+            "type": "string",
+            "format": ""
+        },
+        {
             "name": "reviewStatus",
             "baseName": "review_status",
             "type": "string",
             "format": ""
+        },
+        {
+            "name": "scanScore",
+            "baseName": "scan_score",
+            "type": "number",
+            "format": "double"
         },
         {
             "name": "sentAs",
