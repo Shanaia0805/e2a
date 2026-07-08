@@ -71,7 +71,10 @@ export function protectionHeadline(
   return {
     category: top ? categoryLabel(top.name) : "Content flagged by screening scan",
     summary: scan.summary,
-    score: scan.score,
+    // The score shown next to the category label is THAT category's confidence,
+    // not the finding-level aggregate — otherwise the number could contradict
+    // the label. Falls back to the finding score when the category has none.
+    score: top?.score ?? scan.score,
   };
 }
 

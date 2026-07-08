@@ -140,4 +140,41 @@ describe("protectionHeadline", () => {
     expect(h?.category).toBe("Content flagged by screening scan");
     expect(h?.summary).toBe("suspicious link");
   });
+
+  it("shows the top CATEGORY's score, not the finding-level aggregate", () => {
+    const h = protectionHeadline([
+      {
+        source: "scan",
+        score: 0.7, // finding-level aggregate — must NOT be what we display
+        categories: [{ name: "prompt-injection", score: 0.95 }],
+      },
+    ]);
+    expect(h?.score).toBe(0.95);
+  });
+
+  it("falls back to the finding score when the top category has none", () => {
+    const h = protectionHeadline([
+      { source: "scan", score: 0.6, categories: [{ name: "phishing" }] },
+    ]);
+    expect(h?.score).toBe(0.6);
+    expect(h?.category).toBe("Phishing");
+  });
+
+  it("does not mutate the source categories array (SWR cache safety)", () => {
+    const cats = [
+      { name: "jailbreak", score: 0.4 },
+      { name: "prompt-injection", score: 0.92 },
+    ];
+    const before = cats.map((c) => c.name);
+    protectionHeadline([{ source: "scan", categories: cats }]);
+    expect(cats.map((c) => c.name)).toEqual(before);
+  });
+
+  it("stays a string for a prototype-key category name", () => {
+    const h = protectionHeadline([
+      { source: "scan", categories: [{ name: "__proto__", score: 1 }] },
+    ]);
+    expect(typeof h?.category).toBe("string");
+    expect(h?.category).toBe("Proto");
+  });
 });
