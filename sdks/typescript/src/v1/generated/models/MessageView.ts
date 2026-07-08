@@ -14,6 +14,7 @@ import { AttachmentMetaView } from '../models/AttachmentMetaView.js';
 import { AuthVerdict } from '../models/AuthVerdict.js';
 import { MessageBodyView } from '../models/MessageBodyView.js';
 import { MessageParsedView } from '../models/MessageParsedView.js';
+import { ProtectionFindingView } from '../models/ProtectionFindingView.js';
 import { HttpFile } from '../http/http.js';
 
 export class MessageView {
@@ -36,6 +37,10 @@ export class MessageView {
     'labels': Array<string>;
     'messageId': string;
     'parsed'?: MessageParsedView;
+    /**
+    * Screening breakdown behind the hold — detector categories + rationale (review surface only, beta).
+    */
+    'protection'?: Array<ProtectionFindingView> | null;
     'rawMessage': string;
     'readStatus': string;
     'recipient': string;
@@ -161,6 +166,12 @@ export class MessageView {
             "name": "parsed",
             "baseName": "parsed",
             "type": "MessageParsedView",
+            "format": ""
+        },
+        {
+            "name": "protection",
+            "baseName": "protection",
+            "type": "Array<ProtectionFindingView>",
             "format": ""
         },
         {

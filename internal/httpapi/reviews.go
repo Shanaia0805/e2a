@@ -168,6 +168,14 @@ func (s *Server) handleGetReview(ctx context.Context, in *getReviewInput) (*revi
 	// why every held message (both directions, gate and scan) is in the queue.
 	view.ReviewReason = msg.ReviewReason
 	view.ScanScore = msg.ScanScore
+	// Detector breakdown (categories + rationale) behind the hold — best-effort:
+	// a missing/failed events fetch just omits `protection`, leaving the coded
+	// review_reason as the fallback. Ownership is already proven above.
+	if s.deps.ListProtectionEventsByMessage != nil {
+		if events, err := s.deps.ListProtectionEventsByMessage(ctx, in.ID); err == nil && len(events) > 0 {
+			view.Protection = protectionFindings(events)
+		}
+	}
 	return &reviewDetailOutput{Body: view}, nil
 }
 

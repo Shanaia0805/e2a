@@ -232,6 +232,15 @@ type MessageViewWire = {
   // (GET /v1/reviews/{id}); the agent /messages read paths never return holds.
   review_reason?: string;
   scan_score?: number | null;
+  // Screening breakdown (detector categories + rationale) — review detail only.
+  protection?: {
+    source: string;
+    action?: string;
+    detector?: string;
+    score?: number | null;
+    categories?: { name: string; score?: number }[];
+    summary?: string;
+  }[];
   created_at: string;
   auth_headers?: Record<string, string>;
   body?: { text?: string; html?: string };
@@ -264,6 +273,7 @@ function projectPending(
     created_at: w.created_at,
     review_reason: w.review_reason,
     scan_score: w.scan_score,
+    protection: w.protection,
     // Outbound drafts carry an editable `body`; sent outbound and inbound holds
     // carry the content as `parsed` (the draft columns are scrubbed at send).
     // Fall back so the body shows either way.

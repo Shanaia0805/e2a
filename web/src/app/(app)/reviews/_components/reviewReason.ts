@@ -11,10 +11,68 @@ const REVIEW_REASON_LABELS: Record<string, string> = {
   outbound_send: "Outbound send blocked",
 };
 
-// Humanize an unknown coded value: "some_new_reason" → "Some new reason".
+// Humanize an unknown coded value: "some_new_reason" / "some-new-reason" →
+// "Some new reason".
 function humanizeCode(code: string): string {
-  const spaced = code.replace(/_/g, " ").trim();
+  const spaced = code.replace(/[_-]/g, " ").trim();
   return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+}
+
+// Friendly labels for detector threat categories (protection_events). Open set —
+// a category the UI doesn't know yet is humanized, not dropped.
+const THREAT_CATEGORY_LABELS: Record<string, string> = {
+  "prompt-injection": "Prompt injection",
+  jailbreak: "Jailbreak attempt",
+  "data-exfiltration": "Data exfiltration",
+  "credential-phishing": "Credential phishing",
+  phishing: "Phishing",
+  malware: "Malware",
+  "social-engineering": "Social engineering",
+};
+
+// categoryLabel maps a detector category name to a reader-friendly label,
+// tolerating both "prompt-injection" and "prompt_injection" spellings. typeof
+// guard (not `?? `) so a name colliding with an Object.prototype key can't
+// resolve to an inherited member.
+export function categoryLabel(name: string): string {
+  const key = name.toLowerCase().replace(/_/g, "-");
+  const mapped = THREAT_CATEGORY_LABELS[key];
+  return typeof mapped === "string" ? mapped : humanizeCode(name);
+}
+
+// A scan finding shape from ProtectionFinding[] (kept structural to avoid a
+// cross-module type import).
+type ScanFinding = {
+  source: string;
+  action?: string;
+  score?: number | null;
+  categories?: { name: string; score?: number }[];
+  summary?: string;
+};
+
+// protectionHeadline distills the review-detail protection breakdown into the
+// one-line "why held" shown in the expanded row: the highest-confidence scan
+// category + the detector's rationale (e.g. "Prompt injection — instructs the
+// agent to wire funds"). Returns null when there is no scan detail to show
+// (gate-only holds, or the detail hasn't loaded) so the caller falls back to the
+// coarse review_reason label.
+export function protectionHeadline(
+  findings?: ScanFinding[] | null,
+): { category: string; summary?: string; score?: number | null } | null {
+  if (!findings || findings.length === 0) return null;
+  const scan = findings.find(
+    (f) =>
+      f.source === "scan" && ((f.categories?.length ?? 0) > 0 || !!f.summary),
+  );
+  if (!scan) return null;
+  const top = scan.categories
+    ?.slice()
+    .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))[0];
+  return {
+    category: top ? categoryLabel(top.name) : "Content flagged by screening scan",
+    summary: scan.summary,
+    score: scan.score,
+  };
 }
 
 // Builds the "why held" line for a review row. Returns null when there is no

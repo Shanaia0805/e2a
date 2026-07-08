@@ -51,6 +51,7 @@ export * from '../models/PageWebhookView.js';
 export * from '../models/ProtectionConfigView.js';
 export * from '../models/ProtectionDirectionView.js';
 export * from '../models/ProtectionEventExportEntry.js';
+export * from '../models/ProtectionFindingView.js';
 export * from '../models/ProtectionGateView.js';
 export * from '../models/ProtectionHoldsView.js';
 export * from '../models/ProtectionScanView.js';
@@ -77,6 +78,7 @@ export * from '../models/TemplateSummaryView.js';
 export * from '../models/TemplateView.js';
 export * from '../models/TestWebhookRequest.js';
 export * from '../models/TestWebhookResponse.js';
+export * from '../models/ThreatCategoryView.js';
 export * from '../models/UpdateAgentRequest.js';
 export * from '../models/UpdateMessageRequest.js';
 export * from '../models/UpdateMessageResultView.js';
@@ -128,7 +130,7 @@ import { Message } from '../models/Message.js';
 import { MessageBodyView } from '../models/MessageBodyView.js';
 import { MessageParsedView } from '../models/MessageParsedView.js';
 import { MessageSummaryView      , MessageSummaryViewDirectionEnum                  } from '../models/MessageSummaryView.js';
-import { MessageView         , MessageViewDirectionEnum                      } from '../models/MessageView.js';
+import { MessageView         , MessageViewDirectionEnum                       } from '../models/MessageView.js';
 import { OAuthConnectionEntry } from '../models/OAuthConnectionEntry.js';
 import { PageAPIKeyView } from '../models/PageAPIKeyView.js';
 import { PageAgentView } from '../models/PageAgentView.js';
@@ -145,6 +147,7 @@ import { PageWebhookView } from '../models/PageWebhookView.js';
 import { ProtectionConfigView } from '../models/ProtectionConfigView.js';
 import { ProtectionDirectionView } from '../models/ProtectionDirectionView.js';
 import { ProtectionEventExportEntry } from '../models/ProtectionEventExportEntry.js';
+import { ProtectionFindingView } from '../models/ProtectionFindingView.js';
 import { ProtectionGateView, ProtectionGateViewActionEnum   , ProtectionGateViewPolicyEnum   } from '../models/ProtectionGateView.js';
 import { ProtectionHoldsView, ProtectionHoldsViewOnExpiryEnum    } from '../models/ProtectionHoldsView.js';
 import { ProtectionScanView, ProtectionScanViewSensitivityEnum   } from '../models/ProtectionScanView.js';
@@ -171,6 +174,7 @@ import { TemplateSummaryView } from '../models/TemplateSummaryView.js';
 import { TemplateView } from '../models/TemplateView.js';
 import { TestWebhookRequest , TestWebhookRequestEventEnum   } from '../models/TestWebhookRequest.js';
 import { TestWebhookResponse } from '../models/TestWebhookResponse.js';
+import { ThreatCategoryView } from '../models/ThreatCategoryView.js';
 import { UpdateAgentRequest } from '../models/UpdateAgentRequest.js';
 import { UpdateMessageRequest } from '../models/UpdateMessageRequest.js';
 import { UpdateMessageResultView } from '../models/UpdateMessageResultView.js';
@@ -269,6 +273,7 @@ let typeMap: {[index: string]: any} = {
     "ProtectionConfigView": ProtectionConfigView,
     "ProtectionDirectionView": ProtectionDirectionView,
     "ProtectionEventExportEntry": ProtectionEventExportEntry,
+    "ProtectionFindingView": ProtectionFindingView,
     "ProtectionGateView": ProtectionGateView,
     "ProtectionHoldsView": ProtectionHoldsView,
     "ProtectionScanView": ProtectionScanView,
@@ -295,6 +300,7 @@ let typeMap: {[index: string]: any} = {
     "TemplateView": TemplateView,
     "TestWebhookRequest": TestWebhookRequest,
     "TestWebhookResponse": TestWebhookResponse,
+    "ThreatCategoryView": ThreatCategoryView,
     "UpdateAgentRequest": UpdateAgentRequest,
     "UpdateMessageRequest": UpdateMessageRequest,
     "UpdateMessageResultView": UpdateMessageResultView,

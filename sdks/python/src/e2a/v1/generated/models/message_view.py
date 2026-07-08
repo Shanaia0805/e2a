@@ -24,6 +24,7 @@ from e2a.v1.generated.models.attachment_meta_view import AttachmentMetaView
 from e2a.v1.generated.models.auth_verdict import AuthVerdict
 from e2a.v1.generated.models.message_body_view import MessageBodyView
 from e2a.v1.generated.models.message_parsed_view import MessageParsedView
+from e2a.v1.generated.models.protection_finding_view import ProtectionFindingView
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -47,6 +48,7 @@ class MessageView(BaseModel):
     labels: List[StrictStr]
     message_id: StrictStr
     parsed: Optional[MessageParsedView] = None
+    protection: Optional[List[ProtectionFindingView]] = Field(default=None, description="Screening breakdown behind the hold — detector categories + rationale (review surface only, beta).")
     raw_message: StrictStr
     read_status: StrictStr
     recipient: StrictStr
@@ -60,7 +62,7 @@ class MessageView(BaseModel):
     to: List[StrictStr]
     webhook_error: Optional[StrictStr] = None
     webhook_status: Optional[StrictStr] = None
-    __properties: ClassVar[List[str]] = ["attachments", "auth", "auth_headers", "body", "cc", "conversation_id", "created_at", "delivery_detail", "delivery_status", "direction", "flag_reason", "flagged", "from", "labels", "message_id", "parsed", "raw_message", "read_status", "recipient", "reply_to", "review_reason", "review_status", "scan_score", "sent_as", "size_bytes", "subject", "to", "webhook_error", "webhook_status"]
+    __properties: ClassVar[List[str]] = ["attachments", "auth", "auth_headers", "body", "cc", "conversation_id", "created_at", "delivery_detail", "delivery_status", "direction", "flag_reason", "flagged", "from", "labels", "message_id", "parsed", "protection", "raw_message", "read_status", "recipient", "reply_to", "review_reason", "review_status", "scan_score", "sent_as", "size_bytes", "subject", "to", "webhook_error", "webhook_status"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -117,6 +119,18 @@ class MessageView(BaseModel):
         # override the default output from pydantic by calling `to_dict()` of parsed
         if self.parsed:
             _dict['parsed'] = self.parsed.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of each item in protection (list)
+        _items = []
+        if self.protection:
+            for _item_protection in self.protection:
+                if _item_protection:
+                    _items.append(_item_protection.to_dict())
+            _dict['protection'] = _items
+        # set to None if protection (nullable) is None
+        # and model_fields_set contains the field
+        if self.protection is None and "protection" in self.model_fields_set:
+            _dict['protection'] = None
+
         return _dict
 
     @classmethod
@@ -145,6 +159,7 @@ class MessageView(BaseModel):
             "labels": obj.get("labels"),
             "message_id": obj.get("message_id"),
             "parsed": MessageParsedView.from_dict(obj["parsed"]) if obj.get("parsed") is not None else None,
+            "protection": [ProtectionFindingView.from_dict(_item) for _item in obj["protection"]] if obj.get("protection") is not None else None,
             "raw_message": obj.get("raw_message"),
             "read_status": obj.get("read_status"),
             "recipient": obj.get("recipient"),

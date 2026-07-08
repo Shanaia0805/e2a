@@ -1197,6 +1197,13 @@ components:
           type: string
         parsed:
           $ref: "#/components/schemas/MessageParsedView"
+        protection:
+          description: Screening breakdown behind the hold — detector categories + rationale (review surface only, beta).
+          items:
+            $ref: "#/components/schemas/ProtectionFindingView"
+          type:
+            - array
+            - "null"
         raw_message:
           contentEncoding: base64
           type: string
@@ -1518,6 +1525,35 @@ components:
         - reason
         - action
         - created_at
+      type: object
+    ProtectionFindingView:
+      additionalProperties: false
+      properties:
+        action:
+          description: "Applied action for this finding. Open set. Known values: flag, review, block."
+          type: string
+        categories:
+          description: Detected threat categories, highest-confidence first (scan findings only).
+          items:
+            $ref: "#/components/schemas/ThreatCategoryView"
+          type:
+            - array
+            - "null"
+        detector:
+          description: Content-scan detector(s) that contributed (scan findings only), e.g. "gemini".
+          type: string
+        score:
+          description: Aggregate content-scan score 0..1 (scan findings only).
+          format: double
+          type: number
+        source:
+          description: "Which producer flagged the message. Open set; tolerate unknown values. Known values: gate, scan."
+          type: string
+        summary:
+          description: Short natural-language rationale for a scan finding (curated; never the raw provider payload).
+          type: string
+      required:
+        - source
       type: object
     ProtectionGateView:
       additionalProperties: false
@@ -2051,6 +2087,17 @@ components:
           type: string
       required:
         - delivery_id
+      type: object
+    ThreatCategoryView:
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+        score:
+          format: double
+          type: number
+      required:
+        - name
       type: object
     UpdateAgentRequest:
       additionalProperties: false

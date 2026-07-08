@@ -90,6 +90,7 @@ __all__ = [
     "ProtectionConfigView",
     "ProtectionDirectionView",
     "ProtectionEventExportEntry",
+    "ProtectionFindingView",
     "ProtectionGateView",
     "ProtectionHoldsView",
     "ProtectionScanView",
@@ -116,6 +117,7 @@ __all__ = [
     "TemplateView",
     "TestWebhookRequest",
     "TestWebhookResponse",
+    "ThreatCategoryView",
     "UpdateAgentRequest",
     "UpdateMessageRequest",
     "UpdateMessageResultView",
@@ -209,6 +211,7 @@ from e2a.v1.generated.models.page_webhook_view import PageWebhookView as PageWeb
 from e2a.v1.generated.models.protection_config_view import ProtectionConfigView as ProtectionConfigView
 from e2a.v1.generated.models.protection_direction_view import ProtectionDirectionView as ProtectionDirectionView
 from e2a.v1.generated.models.protection_event_export_entry import ProtectionEventExportEntry as ProtectionEventExportEntry
+from e2a.v1.generated.models.protection_finding_view import ProtectionFindingView as ProtectionFindingView
 from e2a.v1.generated.models.protection_gate_view import ProtectionGateView as ProtectionGateView
 from e2a.v1.generated.models.protection_holds_view import ProtectionHoldsView as ProtectionHoldsView
 from e2a.v1.generated.models.protection_scan_view import ProtectionScanView as ProtectionScanView
@@ -235,6 +238,7 @@ from e2a.v1.generated.models.template_summary_view import TemplateSummaryView as
 from e2a.v1.generated.models.template_view import TemplateView as TemplateView
 from e2a.v1.generated.models.test_webhook_request import TestWebhookRequest as TestWebhookRequest
 from e2a.v1.generated.models.test_webhook_response import TestWebhookResponse as TestWebhookResponse
+from e2a.v1.generated.models.threat_category_view import ThreatCategoryView as ThreatCategoryView
 from e2a.v1.generated.models.update_agent_request import UpdateAgentRequest as UpdateAgentRequest
 from e2a.v1.generated.models.update_message_request import UpdateMessageRequest as UpdateMessageRequest
 from e2a.v1.generated.models.update_message_result_view import UpdateMessageResultView as UpdateMessageResultView

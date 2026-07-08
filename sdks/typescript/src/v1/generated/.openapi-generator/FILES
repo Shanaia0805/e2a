@@ -70,6 +70,7 @@ models/PageWebhookView.ts
 models/ProtectionConfigView.ts
 models/ProtectionDirectionView.ts
 models/ProtectionEventExportEntry.ts
+models/ProtectionFindingView.ts
 models/ProtectionGateView.ts
 models/ProtectionHoldsView.ts
 models/ProtectionScanView.ts
@@ -96,6 +97,7 @@ models/TemplateSummaryView.ts
 models/TemplateView.ts
 models/TestWebhookRequest.ts
 models/TestWebhookResponse.ts
+models/ThreatCategoryView.ts
 models/UpdateAgentRequest.ts
 models/UpdateMessageRequest.ts
 models/UpdateMessageResultView.ts

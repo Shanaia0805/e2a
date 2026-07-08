@@ -73,6 +73,11 @@ type MessageView struct {
 	// ScanScore is the aggregate content-scan score (0..1) behind a scan hold;
 	// review surface only, omitted for gate-only holds.
 	ScanScore   *float64          `json:"scan_score,omitempty" doc:"Aggregate content-scan score (0..1) that drove a scan hold (review surface only). Omitted for gate-only holds."`
+	// Protection is the per-producer screening breakdown behind the hold (the
+	// detector categories + rationale that explain review_reason). Review surface
+	// only; populated by the review-detail handler, never on the agent /messages
+	// path. Beta.
+	Protection  []ProtectionFindingView `json:"protection,omitempty" doc:"Screening breakdown behind the hold — detector categories + rationale (review surface only, beta)."`
 	Labels      []string          `json:"labels" nullable:"false"`
 	CreatedAt   string            `json:"created_at" format:"date-time"`
 	// AuthHeaders is the raw X-E2A-Auth-* blob — a convenience copy, optional
