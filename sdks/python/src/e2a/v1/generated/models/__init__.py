@@ -49,6 +49,7 @@ from e2a.v1.generated.models.domain_sending_failed_data import DomainSendingFail
 from e2a.v1.generated.models.domain_sending_verified_data import DomainSendingVerifiedData
 from e2a.v1.generated.models.domain_suppression_added_data import DomainSuppressionAddedData
 from e2a.v1.generated.models.domain_view import DomainView
+from e2a.v1.generated.models.duplicate_recipient_details import DuplicateRecipientDetails
 from e2a.v1.generated.models.email_bounced_data import EmailBouncedData
 from e2a.v1.generated.models.email_complained_data import EmailComplainedData
 from e2a.v1.generated.models.email_delivered_data import EmailDeliveredData
@@ -122,6 +123,7 @@ from e2a.v1.generated.models.template_summary_view import TemplateSummaryView
 from e2a.v1.generated.models.template_view import TemplateView
 from e2a.v1.generated.models.test_webhook_request import TestWebhookRequest
 from e2a.v1.generated.models.test_webhook_response import TestWebhookResponse
+from e2a.v1.generated.models.too_many_messages_details import TooManyMessagesDetails
 from e2a.v1.generated.models.too_many_recipients_details import TooManyRecipientsDetails
 from e2a.v1.generated.models.update_agent_request import UpdateAgentRequest
 from e2a.v1.generated.models.update_message_request import UpdateMessageRequest

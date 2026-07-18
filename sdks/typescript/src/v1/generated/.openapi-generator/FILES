@@ -52,6 +52,7 @@ models/DomainSendingFailedData.ts
 models/DomainSendingVerifiedData.ts
 models/DomainSuppressionAddedData.ts
 models/DomainView.ts
+models/DuplicateRecipientDetails.ts
 models/EmailBouncedData.ts
 models/EmailComplainedData.ts
 models/EmailDeliveredData.ts
@@ -126,6 +127,7 @@ models/TemplateSummaryView.ts
 models/TemplateView.ts
 models/TestWebhookRequest.ts
 models/TestWebhookResponse.ts
+models/TooManyMessagesDetails.ts
 models/TooManyRecipientsDetails.ts
 models/UpdateAgentRequest.ts
 models/UpdateMessageRequest.ts

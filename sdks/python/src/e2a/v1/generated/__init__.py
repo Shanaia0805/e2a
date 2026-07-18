@@ -73,6 +73,7 @@ __all__ = [
     "DomainSendingVerifiedData",
     "DomainSuppressionAddedData",
     "DomainView",
+    "DuplicateRecipientDetails",
     "EmailBouncedData",
     "EmailComplainedData",
     "EmailDeliveredData",
@@ -146,6 +147,7 @@ __all__ = [
     "TemplateView",
     "TestWebhookRequest",
     "TestWebhookResponse",
+    "TooManyMessagesDetails",
     "TooManyRecipientsDetails",
     "UpdateAgentRequest",
     "UpdateMessageRequest",
@@ -225,6 +227,7 @@ from e2a.v1.generated.models.domain_sending_failed_data import DomainSendingFail
 from e2a.v1.generated.models.domain_sending_verified_data import DomainSendingVerifiedData as DomainSendingVerifiedData
 from e2a.v1.generated.models.domain_suppression_added_data import DomainSuppressionAddedData as DomainSuppressionAddedData
 from e2a.v1.generated.models.domain_view import DomainView as DomainView
+from e2a.v1.generated.models.duplicate_recipient_details import DuplicateRecipientDetails as DuplicateRecipientDetails
 from e2a.v1.generated.models.email_bounced_data import EmailBouncedData as EmailBouncedData
 from e2a.v1.generated.models.email_complained_data import EmailComplainedData as EmailComplainedData
 from e2a.v1.generated.models.email_delivered_data import EmailDeliveredData as EmailDeliveredData
@@ -298,6 +301,7 @@ from e2a.v1.generated.models.template_summary_view import TemplateSummaryView as
 from e2a.v1.generated.models.template_view import TemplateView as TemplateView
 from e2a.v1.generated.models.test_webhook_request import TestWebhookRequest as TestWebhookRequest
 from e2a.v1.generated.models.test_webhook_response import TestWebhookResponse as TestWebhookResponse
+from e2a.v1.generated.models.too_many_messages_details import TooManyMessagesDetails as TooManyMessagesDetails
 from e2a.v1.generated.models.too_many_recipients_details import TooManyRecipientsDetails as TooManyRecipientsDetails
 from e2a.v1.generated.models.update_agent_request import UpdateAgentRequest as UpdateAgentRequest
 from e2a.v1.generated.models.update_message_request import UpdateMessageRequest as UpdateMessageRequest

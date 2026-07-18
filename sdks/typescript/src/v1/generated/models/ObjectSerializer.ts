@@ -34,6 +34,7 @@ export * from '../models/DomainSendingFailedData.js';
 export * from '../models/DomainSendingVerifiedData.js';
 export * from '../models/DomainSuppressionAddedData.js';
 export * from '../models/DomainView.js';
+export * from '../models/DuplicateRecipientDetails.js';
 export * from '../models/EmailBouncedData.js';
 export * from '../models/EmailComplainedData.js';
 export * from '../models/EmailDeliveredData.js';
@@ -107,6 +108,7 @@ export * from '../models/TemplateSummaryView.js';
 export * from '../models/TemplateView.js';
 export * from '../models/TestWebhookRequest.js';
 export * from '../models/TestWebhookResponse.js';
+export * from '../models/TooManyMessagesDetails.js';
 export * from '../models/TooManyRecipientsDetails.js';
 export * from '../models/UpdateAgentRequest.js';
 export * from '../models/UpdateMessageRequest.js';
@@ -161,6 +163,7 @@ import { DomainSendingFailedData } from '../models/DomainSendingFailedData.js';
 import { DomainSendingVerifiedData } from '../models/DomainSendingVerifiedData.js';
 import { DomainSuppressionAddedData } from '../models/DomainSuppressionAddedData.js';
 import { DomainView } from '../models/DomainView.js';
+import { DuplicateRecipientDetails } from '../models/DuplicateRecipientDetails.js';
 import { EmailBouncedData  , EmailBouncedDataBounceTypeEnum        } from '../models/EmailBouncedData.js';
 import { EmailComplainedData } from '../models/EmailComplainedData.js';
 import { EmailDeliveredData } from '../models/EmailDeliveredData.js';
@@ -234,6 +237,7 @@ import { TemplateSummaryView } from '../models/TemplateSummaryView.js';
 import { TemplateView } from '../models/TemplateView.js';
 import { TestWebhookRequest , TestWebhookRequestTypeEnum   } from '../models/TestWebhookRequest.js';
 import { TestWebhookResponse } from '../models/TestWebhookResponse.js';
+import { TooManyMessagesDetails } from '../models/TooManyMessagesDetails.js';
 import { TooManyRecipientsDetails } from '../models/TooManyRecipientsDetails.js';
 import { UpdateAgentRequest } from '../models/UpdateAgentRequest.js';
 import { UpdateMessageRequest } from '../models/UpdateMessageRequest.js';
@@ -318,6 +322,7 @@ let typeMap: {[index: string]: any} = {
     "DomainSendingVerifiedData": DomainSendingVerifiedData,
     "DomainSuppressionAddedData": DomainSuppressionAddedData,
     "DomainView": DomainView,
+    "DuplicateRecipientDetails": DuplicateRecipientDetails,
     "EmailBouncedData": EmailBouncedData,
     "EmailComplainedData": EmailComplainedData,
     "EmailDeliveredData": EmailDeliveredData,
@@ -391,6 +396,7 @@ let typeMap: {[index: string]: any} = {
     "TemplateView": TemplateView,
     "TestWebhookRequest": TestWebhookRequest,
     "TestWebhookResponse": TestWebhookResponse,
+    "TooManyMessagesDetails": TooManyMessagesDetails,
     "TooManyRecipientsDetails": TooManyRecipientsDetails,
     "UpdateAgentRequest": UpdateAgentRequest,
     "UpdateMessageRequest": UpdateMessageRequest,
