@@ -11,7 +11,10 @@ export * from '../models/AttachmentView.js';
 export * from '../models/AuthVerdict.js';
 export * from '../models/BatchMessage.js';
 export * from '../models/BatchResult.js';
+export * from '../models/BatchStatusRollupView.js';
+export * from '../models/BatchSuppressedItem.js';
 export * from '../models/BatchSuppressedResult.js';
+export * from '../models/BatchView.js';
 export * from '../models/CheckResult.js';
 export * from '../models/ConversationDetailView.js';
 export * from '../models/ConversationSummaryView.js';
@@ -145,7 +148,10 @@ import { AttachmentView } from '../models/AttachmentView.js';
 import { AuthVerdict } from '../models/AuthVerdict.js';
 import { BatchMessage } from '../models/BatchMessage.js';
 import { BatchResult } from '../models/BatchResult.js';
+import { BatchStatusRollupView } from '../models/BatchStatusRollupView.js';
+import { BatchSuppressedItem } from '../models/BatchSuppressedItem.js';
 import { BatchSuppressedResult } from '../models/BatchSuppressedResult.js';
+import { BatchView } from '../models/BatchView.js';
 import { CheckResult } from '../models/CheckResult.js';
 import { ConversationDetailView } from '../models/ConversationDetailView.js';
 import { ConversationSummaryView } from '../models/ConversationSummaryView.js';
@@ -309,7 +315,10 @@ let typeMap: {[index: string]: any} = {
     "AuthVerdict": AuthVerdict,
     "BatchMessage": BatchMessage,
     "BatchResult": BatchResult,
+    "BatchStatusRollupView": BatchStatusRollupView,
+    "BatchSuppressedItem": BatchSuppressedItem,
     "BatchSuppressedResult": BatchSuppressedResult,
+    "BatchView": BatchView,
     "CheckResult": CheckResult,
     "ConversationDetailView": ConversationDetailView,
     "ConversationSummaryView": ConversationSummaryView,

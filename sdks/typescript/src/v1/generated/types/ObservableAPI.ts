@@ -16,7 +16,10 @@ import { AttachmentView } from '../models/AttachmentView.js';
 import { AuthVerdict } from '../models/AuthVerdict.js';
 import { BatchMessage } from '../models/BatchMessage.js';
 import { BatchResult } from '../models/BatchResult.js';
+import { BatchStatusRollupView } from '../models/BatchStatusRollupView.js';
+import { BatchSuppressedItem } from '../models/BatchSuppressedItem.js';
 import { BatchSuppressedResult } from '../models/BatchSuppressedResult.js';
+import { BatchView } from '../models/BatchView.js';
 import { CheckResult } from '../models/CheckResult.js';
 import { ConversationDetailView } from '../models/ConversationDetailView.js';
 import { ConversationSummaryView } from '../models/ConversationSummaryView.js';
@@ -1326,6 +1329,40 @@ export class ObservableMessagesApi {
     }
 
     /**
+     * Returns the batch header (counts + the list of items dropped by the suppression filter at accept time) plus a live rollup of the batch\'s child messages by delivery status. The rollup is computed on read from the messages table — poll it after a batch send to watch delivery progress. For per-recipient detail beyond the aggregate, use GET /v1/messages?batch_id={batch_id}. Account-scoped: a batch owned by another account returns 404 not_found.
+     * Get a batch\'s header and delivery-status rollup
+     * @param batchId The batch id, e.g. bat_abc123.
+     */
+    public getBatchWithHttpInfo(batchId: string, _options?: ConfigurationOptions): Observable<HttpInfo<BatchView>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.getBatch(batchId, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.getBatchWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * Returns the batch header (counts + the list of items dropped by the suppression filter at accept time) plus a live rollup of the batch\'s child messages by delivery status. The rollup is computed on read from the messages table — poll it after a batch send to watch delivery progress. For per-recipient detail beyond the aggregate, use GET /v1/messages?batch_id={batch_id}. Account-scoped: a batch owned by another account returns 404 not_found.
+     * Get a batch\'s header and delivery-status rollup
+     * @param batchId The batch id, e.g. bat_abc123.
+     */
+    public getBatch(batchId: string, _options?: ConfigurationOptions): Observable<BatchView> {
+        return this.getBatchWithHttpInfo(batchId, _options).pipe(map((apiResponse: HttpInfo<BatchView>) => apiResponse.data));
+    }
+
+    /**
      * Fetch a single message (inbound or outbound) by id, scoped to an agent the caller owns. A trashed message remains readable by this direct GET and includes deleted_at until it is permanently purged (30 days after deletion by default, deployment-configurable); ordinary lists, conversations, reply targets, and forward targets exclude it. Includes the raw message and inbound auth headers.
      * Get a message
      * @param email The agent\&#39;s full email address.
@@ -1371,6 +1408,7 @@ export class ObservableMessagesApi {
      * @param [from_] Case-insensitive substring match on sender.
      * @param [subjectContains] Case-insensitive substring match on subject.
      * @param [conversationId]
+     * @param [batchId] Filter to the child messages of a batch send (docs/design/batch-send.md §7.2). Outbound only; pair with direction&#x3D;outbound. Exact match on the batch id, e.g. bat_abc123.
      * @param [labels] Repeatable; AND-matched.
      * @param [since] RFC3339; created_at &gt;&#x3D; since.
      * @param [until] RFC3339; created_at &lt; until.
@@ -1378,10 +1416,10 @@ export class ObservableMessagesApi {
      * @param [limit]
      * @param [deleted] List the trash instead: messages that were soft-deleted and are restorable until purged (30 days after deletion by default, deployment-configurable). Defaults to false (live messages only).
      */
-    public listMessagesWithHttpInfo(email: string, direction?: 'inbound' | 'outbound' | 'all', readStatus?: 'unread' | 'read' | 'all', sort?: 'asc' | 'desc', from_?: string, subjectContains?: string, conversationId?: string, labels?: Array<string>, since?: string, until?: string, cursor?: string, limit?: number, deleted?: boolean, _options?: ConfigurationOptions): Observable<HttpInfo<PageMessageSummaryView>> {
+    public listMessagesWithHttpInfo(email: string, direction?: 'inbound' | 'outbound' | 'all', readStatus?: 'unread' | 'read' | 'all', sort?: 'asc' | 'desc', from_?: string, subjectContains?: string, conversationId?: string, batchId?: string, labels?: Array<string>, since?: string, until?: string, cursor?: string, limit?: number, deleted?: boolean, _options?: ConfigurationOptions): Observable<HttpInfo<PageMessageSummaryView>> {
         const _config = mergeConfiguration(this.configuration, _options);
 
-        const requestContextPromise = this.requestFactory.listMessages(email, direction, readStatus, sort, from_, subjectContains, conversationId, labels, since, until, cursor, limit, deleted, _config);
+        const requestContextPromise = this.requestFactory.listMessages(email, direction, readStatus, sort, from_, subjectContains, conversationId, batchId, labels, since, until, cursor, limit, deleted, _config);
         // build promise chain
         let middlewarePreObservable = from<RequestContext>(requestContextPromise);
         for (const middleware of _config.middleware) {
@@ -1408,6 +1446,7 @@ export class ObservableMessagesApi {
      * @param [from_] Case-insensitive substring match on sender.
      * @param [subjectContains] Case-insensitive substring match on subject.
      * @param [conversationId]
+     * @param [batchId] Filter to the child messages of a batch send (docs/design/batch-send.md §7.2). Outbound only; pair with direction&#x3D;outbound. Exact match on the batch id, e.g. bat_abc123.
      * @param [labels] Repeatable; AND-matched.
      * @param [since] RFC3339; created_at &gt;&#x3D; since.
      * @param [until] RFC3339; created_at &lt; until.
@@ -1415,8 +1454,8 @@ export class ObservableMessagesApi {
      * @param [limit]
      * @param [deleted] List the trash instead: messages that were soft-deleted and are restorable until purged (30 days after deletion by default, deployment-configurable). Defaults to false (live messages only).
      */
-    public listMessages(email: string, direction?: 'inbound' | 'outbound' | 'all', readStatus?: 'unread' | 'read' | 'all', sort?: 'asc' | 'desc', from_?: string, subjectContains?: string, conversationId?: string, labels?: Array<string>, since?: string, until?: string, cursor?: string, limit?: number, deleted?: boolean, _options?: ConfigurationOptions): Observable<PageMessageSummaryView> {
-        return this.listMessagesWithHttpInfo(email, direction, readStatus, sort, from_, subjectContains, conversationId, labels, since, until, cursor, limit, deleted, _options).pipe(map((apiResponse: HttpInfo<PageMessageSummaryView>) => apiResponse.data));
+    public listMessages(email: string, direction?: 'inbound' | 'outbound' | 'all', readStatus?: 'unread' | 'read' | 'all', sort?: 'asc' | 'desc', from_?: string, subjectContains?: string, conversationId?: string, batchId?: string, labels?: Array<string>, since?: string, until?: string, cursor?: string, limit?: number, deleted?: boolean, _options?: ConfigurationOptions): Observable<PageMessageSummaryView> {
+        return this.listMessagesWithHttpInfo(email, direction, readStatus, sort, from_, subjectContains, conversationId, batchId, labels, since, until, cursor, limit, deleted, _options).pipe(map((apiResponse: HttpInfo<PageMessageSummaryView>) => apiResponse.data));
     }
 
     /**

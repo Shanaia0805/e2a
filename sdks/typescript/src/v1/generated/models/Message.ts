@@ -20,6 +20,7 @@ export class Message {
     'attachments'?: Array<AttachmentMetaView> | null;
     'auth'?: AuthVerdict;
     'authHeaders'?: { [key: string]: string; };
+    'batchId'?: string;
     'bcc'?: Array<string> | null;
     'cc'?: Array<string> | null;
     'conversationId'?: string;
@@ -97,6 +98,12 @@ export class Message {
             "name": "authHeaders",
             "baseName": "auth_headers",
             "type": "{ [key: string]: string; }",
+            "format": ""
+        },
+        {
+            "name": "batchId",
+            "baseName": "batch_id",
+            "type": "string",
             "format": ""
         },
         {

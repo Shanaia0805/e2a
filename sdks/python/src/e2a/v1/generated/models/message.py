@@ -34,6 +34,7 @@ class Message(BaseModel):
     attachments: Optional[List[AttachmentMetaView]] = None
     auth: Optional[AuthVerdict] = None
     auth_headers: Optional[Dict[str, StrictStr]] = None
+    batch_id: Optional[StrictStr] = None
     bcc: Optional[List[StrictStr]] = None
     cc: Optional[List[StrictStr]] = None
     conversation_id: Optional[StrictStr] = None
@@ -75,7 +76,7 @@ class Message(BaseModel):
     webhook_error: Optional[StrictStr] = None
     webhook_status: Optional[StrictStr] = None
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["agent_email", "approval_expires_at", "attachments", "auth", "auth_headers", "bcc", "cc", "conversation_id", "created_at", "deleted_at", "delivered_to", "delivery_detail", "delivery_status", "direction", "edited", "email_message_id", "expires_at", "flag_reason", "flagged", "from", "html", "id", "labels", "method", "provider_message_id", "raw_message", "read_status", "rejection_reason", "reply_to", "review_reason", "reviewed_at", "reviewed_by_name", "reviewed_by_user_id", "scan_action", "scan_score", "sent_as", "size_bytes", "status", "subject", "text", "to", "type", "webhook_attempts", "webhook_error", "webhook_status"]
+    __properties: ClassVar[List[str]] = ["agent_email", "approval_expires_at", "attachments", "auth", "auth_headers", "batch_id", "bcc", "cc", "conversation_id", "created_at", "deleted_at", "delivered_to", "delivery_detail", "delivery_status", "direction", "edited", "email_message_id", "expires_at", "flag_reason", "flagged", "from", "html", "id", "labels", "method", "provider_message_id", "raw_message", "read_status", "rejection_reason", "reply_to", "review_reason", "reviewed_at", "reviewed_by_name", "reviewed_by_user_id", "scan_action", "scan_score", "sent_as", "size_bytes", "status", "subject", "text", "to", "type", "webhook_attempts", "webhook_error", "webhook_status"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -180,6 +181,7 @@ class Message(BaseModel):
             "attachments": [AttachmentMetaView.from_dict(_item) for _item in obj["attachments"]] if obj.get("attachments") is not None else None,
             "auth": AuthVerdict.from_dict(obj["auth"]) if obj.get("auth") is not None else None,
             "auth_headers": obj.get("auth_headers"),
+            "batch_id": obj.get("batch_id"),
             "bcc": obj.get("bcc"),
             "cc": obj.get("cc"),
             "conversation_id": obj.get("conversation_id"),

@@ -50,7 +50,10 @@ __all__ = [
     "AuthVerdict",
     "BatchMessage",
     "BatchResult",
+    "BatchStatusRollupView",
+    "BatchSuppressedItem",
     "BatchSuppressedResult",
+    "BatchView",
     "CheckResult",
     "ConversationDetailView",
     "ConversationSummaryView",
@@ -209,7 +212,10 @@ from e2a.v1.generated.models.attachment_view import AttachmentView as Attachment
 from e2a.v1.generated.models.auth_verdict import AuthVerdict as AuthVerdict
 from e2a.v1.generated.models.batch_message import BatchMessage as BatchMessage
 from e2a.v1.generated.models.batch_result import BatchResult as BatchResult
+from e2a.v1.generated.models.batch_status_rollup_view import BatchStatusRollupView as BatchStatusRollupView
+from e2a.v1.generated.models.batch_suppressed_item import BatchSuppressedItem as BatchSuppressedItem
 from e2a.v1.generated.models.batch_suppressed_result import BatchSuppressedResult as BatchSuppressedResult
+from e2a.v1.generated.models.batch_view import BatchView as BatchView
 from e2a.v1.generated.models.check_result import CheckResult as CheckResult
 from e2a.v1.generated.models.conversation_detail_view import ConversationDetailView as ConversationDetailView
 from e2a.v1.generated.models.conversation_summary_view import ConversationSummaryView as ConversationSummaryView

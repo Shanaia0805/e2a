@@ -29,7 +29,10 @@ models/AttachmentView.ts
 models/AuthVerdict.ts
 models/BatchMessage.ts
 models/BatchResult.ts
+models/BatchStatusRollupView.ts
+models/BatchSuppressedItem.ts
 models/BatchSuppressedResult.ts
+models/BatchView.ts
 models/CheckResult.ts
 models/ConversationDetailView.ts
 models/ConversationSummaryView.ts

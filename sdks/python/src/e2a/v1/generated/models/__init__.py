@@ -26,7 +26,10 @@ from e2a.v1.generated.models.attachment_view import AttachmentView
 from e2a.v1.generated.models.auth_verdict import AuthVerdict
 from e2a.v1.generated.models.batch_message import BatchMessage
 from e2a.v1.generated.models.batch_result import BatchResult
+from e2a.v1.generated.models.batch_status_rollup_view import BatchStatusRollupView
+from e2a.v1.generated.models.batch_suppressed_item import BatchSuppressedItem
 from e2a.v1.generated.models.batch_suppressed_result import BatchSuppressedResult
+from e2a.v1.generated.models.batch_view import BatchView
 from e2a.v1.generated.models.check_result import CheckResult
 from e2a.v1.generated.models.conversation_detail_view import ConversationDetailView
 from e2a.v1.generated.models.conversation_summary_view import ConversationSummaryView
