@@ -48,6 +48,9 @@ __all__ = [
     "AttachmentMetaView",
     "AttachmentView",
     "AuthVerdict",
+    "BatchMessage",
+    "BatchResult",
+    "BatchSuppressedResult",
     "CheckResult",
     "ConversationDetailView",
     "ConversationSummaryView",
@@ -135,6 +138,8 @@ __all__ = [
     "RetryAfterDetails",
     "ReviewView",
     "RotateSecretResponse",
+    "SendBatchRequest",
+    "SendBatchResponse",
     "SendEmailRequest",
     "SendResultView",
     "StarterTemplateDetailView",
@@ -202,6 +207,9 @@ from e2a.v1.generated.models.attachment import Attachment as Attachment
 from e2a.v1.generated.models.attachment_meta_view import AttachmentMetaView as AttachmentMetaView
 from e2a.v1.generated.models.attachment_view import AttachmentView as AttachmentView
 from e2a.v1.generated.models.auth_verdict import AuthVerdict as AuthVerdict
+from e2a.v1.generated.models.batch_message import BatchMessage as BatchMessage
+from e2a.v1.generated.models.batch_result import BatchResult as BatchResult
+from e2a.v1.generated.models.batch_suppressed_result import BatchSuppressedResult as BatchSuppressedResult
 from e2a.v1.generated.models.check_result import CheckResult as CheckResult
 from e2a.v1.generated.models.conversation_detail_view import ConversationDetailView as ConversationDetailView
 from e2a.v1.generated.models.conversation_summary_view import ConversationSummaryView as ConversationSummaryView
@@ -289,6 +297,8 @@ from e2a.v1.generated.models.reply_request import ReplyRequest as ReplyRequest
 from e2a.v1.generated.models.retry_after_details import RetryAfterDetails as RetryAfterDetails
 from e2a.v1.generated.models.review_view import ReviewView as ReviewView
 from e2a.v1.generated.models.rotate_secret_response import RotateSecretResponse as RotateSecretResponse
+from e2a.v1.generated.models.send_batch_request import SendBatchRequest as SendBatchRequest
+from e2a.v1.generated.models.send_batch_response import SendBatchResponse as SendBatchResponse
 from e2a.v1.generated.models.send_email_request import SendEmailRequest as SendEmailRequest
 from e2a.v1.generated.models.send_result_view import SendResultView as SendResultView
 from e2a.v1.generated.models.starter_template_detail_view import StarterTemplateDetailView as StarterTemplateDetailView

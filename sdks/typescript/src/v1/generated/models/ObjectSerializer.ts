@@ -9,6 +9,9 @@ export * from '../models/Attachment.js';
 export * from '../models/AttachmentMetaView.js';
 export * from '../models/AttachmentView.js';
 export * from '../models/AuthVerdict.js';
+export * from '../models/BatchMessage.js';
+export * from '../models/BatchResult.js';
+export * from '../models/BatchSuppressedResult.js';
 export * from '../models/CheckResult.js';
 export * from '../models/ConversationDetailView.js';
 export * from '../models/ConversationSummaryView.js';
@@ -96,6 +99,8 @@ export * from '../models/ReplyRequest.js';
 export * from '../models/RetryAfterDetails.js';
 export * from '../models/ReviewView.js';
 export * from '../models/RotateSecretResponse.js';
+export * from '../models/SendBatchRequest.js';
+export * from '../models/SendBatchResponse.js';
 export * from '../models/SendEmailRequest.js';
 export * from '../models/SendResultView.js';
 export * from '../models/StarterTemplateDetailView.js';
@@ -138,6 +143,9 @@ import { Attachment } from '../models/Attachment.js';
 import { AttachmentMetaView } from '../models/AttachmentMetaView.js';
 import { AttachmentView } from '../models/AttachmentView.js';
 import { AuthVerdict } from '../models/AuthVerdict.js';
+import { BatchMessage } from '../models/BatchMessage.js';
+import { BatchResult } from '../models/BatchResult.js';
+import { BatchSuppressedResult } from '../models/BatchSuppressedResult.js';
 import { CheckResult } from '../models/CheckResult.js';
 import { ConversationDetailView } from '../models/ConversationDetailView.js';
 import { ConversationSummaryView } from '../models/ConversationSummaryView.js';
@@ -225,6 +233,8 @@ import { ReplyRequest } from '../models/ReplyRequest.js';
 import { RetryAfterDetails } from '../models/RetryAfterDetails.js';
 import { ReviewView   , ReviewViewDirectionEnum          } from '../models/ReviewView.js';
 import { RotateSecretResponse } from '../models/RotateSecretResponse.js';
+import { SendBatchRequest } from '../models/SendBatchRequest.js';
+import { SendBatchResponse } from '../models/SendBatchResponse.js';
 import { SendEmailRequest } from '../models/SendEmailRequest.js';
 import { SendResultView } from '../models/SendResultView.js';
 import { StarterTemplateDetailView } from '../models/StarterTemplateDetailView.js';
@@ -297,6 +307,9 @@ let typeMap: {[index: string]: any} = {
     "AttachmentMetaView": AttachmentMetaView,
     "AttachmentView": AttachmentView,
     "AuthVerdict": AuthVerdict,
+    "BatchMessage": BatchMessage,
+    "BatchResult": BatchResult,
+    "BatchSuppressedResult": BatchSuppressedResult,
     "CheckResult": CheckResult,
     "ConversationDetailView": ConversationDetailView,
     "ConversationSummaryView": ConversationSummaryView,
@@ -384,6 +397,8 @@ let typeMap: {[index: string]: any} = {
     "RetryAfterDetails": RetryAfterDetails,
     "ReviewView": ReviewView,
     "RotateSecretResponse": RotateSecretResponse,
+    "SendBatchRequest": SendBatchRequest,
+    "SendBatchResponse": SendBatchResponse,
     "SendEmailRequest": SendEmailRequest,
     "SendResultView": SendResultView,
     "StarterTemplateDetailView": StarterTemplateDetailView,

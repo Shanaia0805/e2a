@@ -27,6 +27,9 @@ models/Attachment.ts
 models/AttachmentMetaView.ts
 models/AttachmentView.ts
 models/AuthVerdict.ts
+models/BatchMessage.ts
+models/BatchResult.ts
+models/BatchSuppressedResult.ts
 models/CheckResult.ts
 models/ConversationDetailView.ts
 models/ConversationSummaryView.ts
@@ -115,6 +118,8 @@ models/ReplyRequest.ts
 models/RetryAfterDetails.ts
 models/ReviewView.ts
 models/RotateSecretResponse.ts
+models/SendBatchRequest.ts
+models/SendBatchResponse.ts
 models/SendEmailRequest.ts
 models/SendResultView.ts
 models/StarterTemplateDetailView.ts
