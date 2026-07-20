@@ -364,9 +364,11 @@ no `from` field). `reply`, `forward`, and `attachments` are sub-resources of a
 single message.
 
 - `GET …/messages` — list inbound + outbound with filters (`direction`,
-  `read_status`, `sort`, `from`, `subject_contains`, `conversation_id`, `labels`,
-  `since`, `until`) and cursor pagination. Held outbound drafts appear with
-  `status=pending_review`.
+  `read_status`, `sort`, `from`, `subject_contains`, `conversation_id`,
+  `batch_id`, `labels`, `since`, `until`) and cursor pagination. Held outbound
+  drafts appear with `status=pending_review`. `batch_id` filters to the child
+  messages of a batch send (see **Batches** below) — pair with
+  `direction=outbound`.
 - `POST …/messages` — send a new email (a new thread). Returns `202 Accepted` for
   every non-terminal outcome — `pending_review` when the agent's protection policy
   holds it for review, or `accepted` when the async pipeline durably queues it —
@@ -445,6 +447,79 @@ composed ceiling once its subject and bodies are included. A breach returns
 > id with no inbox email needed. (The older per-message
 > `POST …/messages/{id}/approve|reject` endpoints were removed in the pre-GA
 > vocabulary freeze.)
+
+### Batches (`/v1/agents/{email}/batches`)
+
+Fan out up to **100 independent emails** in one API call. Each item in the
+request is a full send in its own right — its own `to`/`cc`/`bcc`, subject +
+body (or `template_id`/`template_alias` + per-item `template_data`),
+`reply_to`, and attachments. Recipients never see each other: every item is a
+separate message with its own `message_id`, its own delivery-status lifecycle,
+and its own retry envelope. This is the shape for agent-driven fanout — N
+personalized 1-on-1 sends (LLM-generated outreach, per-user notifications,
+per-recipient transactional mail) — not a single shared body blasted to a list.
+
+- `POST …/batches` — accept a batch. Body: `{ messages: [ … 1..100 items … ],
+  reply_to? }`. Each item is the same shape as a single send minus `from`
+  (the path agent is the sender). `reply_to` at the top level is an optional
+  batch-wide default applied to any item that omits its own; a per-item
+  `reply_to` always wins. Honors `Idempotency-Key` (same semantics as
+  single-send: same key + same body replays the original `202`; same key +
+  different body → `422`).
+
+  Returns **`202 Accepted`** with:
+  ```jsonc
+  {
+    "batch_id": "bat_…",
+    "results": [                         // positionally aligned with request.messages
+      { "message_id": "msg_…" },         // accepted
+      { "suppressed": { "address": "…", "reason": "bounce" } }  // dropped, see below
+    ],
+    "accepted": 1,
+    "suppressed_count": 1
+  }
+  ```
+
+- **Accept semantics — all-or-nothing on validation.** If *any* item fails a
+  structural check the whole batch is rejected and **zero** messages are
+  created: an invalid recipient → `400 invalid_recipient`
+  (`details.item_index`); the same address in the `to` of two items →
+  `400 duplicate_recipient` (`details.item_indices` — batch send does not
+  silently deduplicate); more than 100 items → `400 too_many_messages`; per-item
+  attachment caps (§ outbound limits) **plus** a batch-wide **25 MiB combined
+  attachment** ceiling → `413 payload_too_large` (`details.scope` = `item` or
+  `batch`); an unverified sending domain → `400 domain_not_verified`; over the
+  send rate limit → `429 rate_limited` (a batch counts as N sends); a content or
+  recipient-policy **block** on any item → `403 blocked_by_policy`
+  (`details.item_index`).
+
+- **Suppression is the one per-item exception.** A recipient on the account
+  suppression list doesn't fail the batch — that item is dropped and reported in
+  its `results[]` slot as `{ suppressed: { address, reason } }`, and the rest of
+  the batch proceeds. A batch where *every* item is suppressed is still a valid
+  `202` with `accepted: 0`.
+
+- **HITL is not supported in batch (MVP).** If the agent's protection policy can
+  hold outbound mail for review (`outbound.gate.action = review` or
+  `outbound.scan.sensitivity != off`), `POST …/batches` returns
+  `403 batch_hitl_unsupported` — use single-send per recipient, or disable the
+  review gate on that agent.
+
+- `GET /v1/batches/{batch_id}` — the batch header (requested/accepted counts +
+  the `suppressed[]` drop list captured at accept) plus a **live
+  `status_rollup`** — a per-delivery-status count over the batch's child
+  messages, computed on read. Poll it after a send to watch delivery progress.
+  Account-scoped: a batch owned by another account returns `404 not_found`.
+  For per-recipient detail beyond the aggregate, use
+  `GET …/messages?batch_id={batch_id}&direction=outbound`.
+
+- **Correlation.** The `email.sent` and `email.failed` webhook events for a
+  batch child carry the `batch_id` in their `data`, so a subscriber can group
+  send outcomes back to the originating batch (single sends omit the field).
+  The later SNS-fed delivery-outcome events (`email.delivered` / `bounced` /
+  `complained`) don't carry `batch_id` yet — correlate those via `message_id`,
+  or poll `GET /v1/batches/{batch_id}` whose rollup counts them by joining on
+  `messages.batch_id`.
 
 ### Conversations (`/v1/agents/{email}/conversations`)
 
