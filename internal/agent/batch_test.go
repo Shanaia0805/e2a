@@ -7,8 +7,12 @@ import (
 
 	"github.com/jackc/pgx/v5"
 
+	"github.com/tokencanopy/e2a/internal/agent"
 	"github.com/tokencanopy/e2a/internal/identity"
 	"github.com/tokencanopy/e2a/internal/outbound"
+	"github.com/tokencanopy/e2a/internal/outboundsend"
+	"github.com/tokencanopy/e2a/internal/usage"
+	"github.com/tokencanopy/e2a/internal/webhookpub"
 )
 
 // TestDeliverBatch_HappyPath is the end-to-end accept-tx check: a batch of 3
@@ -232,6 +236,104 @@ func TestDeliverBatch_HITLAgentRefused(t *testing.T) {
 	if oerr.Code != "batch_hitl_unsupported" {
 		t.Errorf("code = %q, want batch_hitl_unsupported", oerr.Code)
 	}
+}
+
+// TestDeliverBatch_EndToEndWorkerDeliversAndEmitsBatchIDEvents is the
+// automated form of the manual Mailpit smoke test: accept a batch, then run
+// the REAL SendWorker over each child's job with a fake SMTP submit, and
+// verify every child settles to sent, each email.sent event carries the
+// batch_id correlation (docs/design/batch-send.md §7.3), and the rollup
+// reflects all-sent. The fake deliverer stands in for the SMTP hop —
+// matching the codebase's async-send test convention (no live Mailpit
+// dependency in the test suite).
+func TestDeliverBatch_EndToEndWorkerDeliversAndEmitsBatchIDEvents(t *testing.T) {
+	api, store, outbox, _ := setupAsyncAPI(t)
+	ctx := context.Background()
+	user, ag := selfAgent(t, store, "batche2e")
+
+	items := []outbound.SendRequest{
+		{From: ag.EmailAddress(), To: []string{"e1@gmail.com"}, Subject: "one", Body: "1"},
+		{From: ag.EmailAddress(), To: []string{"e2@gmail.com"}, Subject: "two", Body: "2"},
+		{From: ag.EmailAddress(), To: []string{"e3@gmail.com"}, Subject: "three", Body: "3"},
+	}
+	res, oerr := api.DeliverBatch(ctx, user, ag, items, nil)
+	if oerr != nil {
+		t.Fatalf("DeliverBatch: %+v", oerr)
+	}
+
+	// No email.sent yet — nothing has run the worker.
+	if n := countEvents(t, store, user.ID, webhookpub.EventEmailSent); n != 0 {
+		t.Fatalf("email.sent before worker = %d, want 0", n)
+	}
+
+	// Drive the real SendWorker over each accepted child with a fake submit.
+	adapter := agent.NewOutboundSendStore(store, outbox, usage.NewNoopUsageTracker())
+	worker := outboundsend.NewSendWorker(adapter, fakeAsyncDeliverer{
+		out: outboundsend.DeliverOutcome{ProviderMessageID: "<ses-batch@amazonses.com>", SentAs: "relay"},
+	})
+	// The fake enqueuer (fakeOutboundEnqueuer.EnqueueBatchTx) stamps job ids
+	// jobID+i = 999, 1000, 1001 across the batch; the worker's claim is keyed
+	// on send_job_id, so each worker job must carry the matching id.
+	for i, item := range res.Items {
+		if item.MessageID == "" {
+			t.Fatalf("Items[%d] not accepted", i)
+		}
+		if err := worker.Work(ctx, workerJobWithID(item.MessageID, int64(999+i), 1)); err != nil {
+			t.Fatalf("worker.Work(%s): %v", item.MessageID, err)
+		}
+	}
+
+	// All 3 settled to sent.
+	rollup, err := store.BatchStatusRollupByID(ctx, res.BatchID)
+	if err != nil {
+		t.Fatalf("rollup: %v", err)
+	}
+	if rollup.Sent != 3 {
+		t.Errorf("rollup.Sent = %d, want 3", rollup.Sent)
+	}
+
+	// 3 email.sent events, and EVERY one carries the batch_id in its envelope.
+	if n := countEvents(t, store, user.ID, webhookpub.EventEmailSent); n != 3 {
+		t.Errorf("email.sent events = %d, want 3", n)
+	}
+	batchIDs := eventBatchIDs(t, store, user.ID, webhookpub.EventEmailSent)
+	if len(batchIDs) != 3 {
+		t.Fatalf("found %d email.sent envelopes, want 3", len(batchIDs))
+	}
+	for _, got := range batchIDs {
+		if got != res.BatchID {
+			t.Errorf("email.sent carried batch_id=%q, want %q", got, res.BatchID)
+		}
+	}
+}
+
+// eventBatchIDs reads the data.batch_id out of every event of the given type
+// for the user, from the webhook_events envelope JSONB.
+func eventBatchIDs(t *testing.T, store *identity.Store, userID, eventType string) []string {
+	t.Helper()
+	var out []string
+	if err := store.WithTx(context.Background(), func(tx pgx.Tx) error {
+		rows, err := tx.Query(context.Background(),
+			`SELECT envelope->'data'->>'batch_id' FROM webhook_events WHERE user_id=$1 AND type=$2`,
+			userID, eventType)
+		if err != nil {
+			return err
+		}
+		defer rows.Close()
+		for rows.Next() {
+			var bid *string
+			if err := rows.Scan(&bid); err != nil {
+				return err
+			}
+			if bid != nil {
+				out = append(out, *bid)
+			}
+		}
+		return rows.Err()
+	}); err != nil {
+		t.Fatalf("read event batch_ids: %v", err)
+	}
+	return out
 }
 
 // TestAgentUsesHITL is a table test for the HITL-detection formula (§14 Q13):
